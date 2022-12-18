@@ -1,12 +1,16 @@
 import { IWebhookFunctions } from 'n8n-core';
 
 import {
+	IDataObject,
+	IHookFunctions,
 	ILoadOptionsFunctions,
 	INodePropertyOptions,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookResponseData,
+	IWebhookSetupMethods,
 } from 'n8n-workflow';
+import { lonescaleApiRequest } from './GenericFunctions';
 
 export class LoneScaleTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -52,12 +56,50 @@ export class LoneScaleTrigger implements INodeType {
 			},
 		],
 	};
-	// The execute method will go here
+
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
+		const req = this.getRequestObject();
 		return {
-			workflowData: [],
+			workflowData: [this.helpers.returnJsonArray(req.body)],
 		};
 	}
+	webhookMethods = {
+		default: {
+			async checkExists(this: IHookFunctions): Promise<boolean> {
+				const webhookData = this.getWorkflowStaticData('node');
+				const webhookUrl = this.getNodeWebhookUrl('default');
+				const workflowId = this.getNodeParameter('workflow') as string;
+				const webhook = await lonescaleApiRequest.call(this, 'GET', `/${workflowId}/hook?type=n8n`);
+				if (webhook.target_url === webhookUrl) {
+					webhookData.webhookId = webhook.webhook_id;
+					return true;
+				}
+				return false;
+			},
+			async create(this: IHookFunctions): Promise<boolean> {
+				const webhookUrl = this.getNodeWebhookUrl('default');
+				const webhookData = this.getWorkflowStaticData('node');
+				const workflowId = this.getNodeParameter('workflow') as string;
+				const body: IDataObject = {
+					type: 'n8n',
+					target_url: webhookUrl,
+				};
+				const webhook = await lonescaleApiRequest.call(this, 'POST', `/${workflowId}/hook`, body);
+				webhookData.webhookId = webhook.webhook_id;
+				return true;
+			},
+			async delete(this: IHookFunctions): Promise<boolean> {
+				const webhookData = this.getWorkflowStaticData('node');
+				try {
+					await lonescaleApiRequest.call(this, 'DELETE', `/${webhookData.webhookId}/hook?type=n8n`);
+				} catch (error) {
+					return false;
+				}
+				delete webhookData.webhookId;
+				return true;
+			},
+		},
+	};
 
 	methods = {
 		loadOptions: {
