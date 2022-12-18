@@ -8,7 +8,6 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	IWebhookResponseData,
-	IWebhookSetupMethods,
 } from 'n8n-workflow';
 import { lonescaleApiRequest } from './GenericFunctions';
 
@@ -59,6 +58,7 @@ export class LoneScaleTrigger implements INodeType {
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const req = this.getRequestObject();
+
 		return {
 			workflowData: [this.helpers.returnJsonArray(req.body)],
 		};
