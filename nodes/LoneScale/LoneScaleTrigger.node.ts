@@ -9,6 +9,7 @@ import {
 	INodeTypeDescription,
 	IWebhookResponseData,
 } from 'n8n-workflow';
+import { BASE_URL } from './constants';
 import { lonescaleApiRequest } from './GenericFunctions';
 
 export class LoneScaleTrigger implements INodeType {
@@ -42,15 +43,17 @@ export class LoneScaleTrigger implements INodeType {
 
 		properties: [
 			{
-				displayName: 'Lonescale Workflow Name or ID',
+				// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
+				displayName: 'Workflow Name',
 				name: 'workflow',
 				type: 'options',
+				noDataExpression: true,
 				typeOptions: {
 					loadOptionsMethod: 'getWorkflows',
 				},
 				default: '',
-				description:
-					'Select one workflow. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>.',
+				// eslint-disable-next-line n8n-nodes-base/node-param-description-missing-final-period, n8n-nodes-base/node-param-description-wrong-for-dynamic-options
+				description: 'Select one workflow. Choose from the list',
 				required: true,
 			},
 		],
@@ -107,14 +110,14 @@ export class LoneScaleTrigger implements INodeType {
 				const credentials = (await this.getCredentials('loneScaleApi'))?.apiKey;
 				const data = await this.helpers.httpRequest({
 					method: 'GET',
-					baseURL: 'http://localhost:85',
+					baseURL: BASE_URL,
 					url: '/workflows',
 					json: true,
 					headers: {
 						'X-API-KEY': credentials,
 					},
 				});
-				return (data as { title: string; id: string }[])?.map((d) => ({
+				return (data as Array<{ title: string; id: string }>)?.map((d) => ({
 					name: d.title,
 					value: d.id,
 				}));

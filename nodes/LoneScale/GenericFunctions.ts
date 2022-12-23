@@ -3,19 +3,20 @@ import { OptionsWithUri } from 'request';
 import { IExecuteFunctions, ILoadOptionsFunctions } from 'n8n-core';
 
 import { IDataObject, IHookFunctions, IWebhookFunctions } from 'n8n-workflow';
+import { BASE_URL } from './constants';
 
 export async function lonescaleApiRequest(
 	this: IExecuteFunctions | IWebhookFunctions | IHookFunctions | ILoadOptionsFunctions,
 	method: string,
 	resource: string,
-	body: any = {},
+	body: IDataObject = {},
 	query: IDataObject = {},
 	uri?: string,
 	option: IDataObject = {},
-): Promise<any> {
+) {
 	const credentials = (await this.getCredentials('loneScaleApi'))?.apiKey;
 
-	const endpoint = 'http://localhost:85/workflows';
+	const endpoint = `${BASE_URL}/workflows`;
 
 	const options: OptionsWithUri = {
 		headers: {
