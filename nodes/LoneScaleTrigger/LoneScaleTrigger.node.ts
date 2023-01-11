@@ -20,9 +20,9 @@ export class LoneScaleTrigger implements INodeType {
 		group: ['trigger'],
 		version: 1,
 		subtitle: '={{$parameter["event"]}}',
-		description: 'Trigger LoneScaleWorkflow',
+		description: 'Trigger LoneScale Workflow',
 		defaults: {
-			name: 'LoneScaleTrigger',
+			name: 'LoneScale Trigger',
 		},
 		inputs: [],
 		outputs: ['main'],
