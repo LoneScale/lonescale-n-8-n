@@ -353,28 +353,28 @@ export class LoneScaleList implements INodeType {
 			if (resource === 'item') {
 				if (operation === 'add') {
 					const listId = this.getNodeParameter('list', i) as string;
-					const first_name = this.getNodeParameter('first_name', i) as string;
-					const last_name = this.getNodeParameter('last_name', i) as string;
-					const full_name = this.getNodeParameter('full_name', i) as string;
-					const linkedin_url = this.getNodeParameter('linkedin_url', i) as string;
-					const company_name = this.getNodeParameter('company_name', i) as string;
-					const current_position = this.getNodeParameter('current_position', i) as string;
+					const firstName = this.getNodeParameter('first_name', i) as string;
+					const lastName = this.getNodeParameter('last_name', i) as string;
+					const fullName = this.getNodeParameter('full_name', i) as string;
+					const linkedinUrl = this.getNodeParameter('linkedin_url', i) as string;
+					const companyName = this.getNodeParameter('company_name', i) as string;
+					const currentPosition = this.getNodeParameter('current_position', i) as string;
 					const domain = this.getNodeParameter('domain', i) as string;
 					const location = this.getNodeParameter('location', i) as string;
 					const email = this.getNodeParameter('email', i) as string;
-					const contact_id = this.getNodeParameter('contact_id', i) as string;
+					const contactId = this.getNodeParameter('contact_id', i) as string;
 
 					const body: IDataObject = {
-						...(first_name && { first_name }),
-						...(last_name && { last_name }),
-						...(full_name && { full_name }),
-						...(linkedin_url && { linkedin_url }),
-						...(company_name && { company_name }),
-						...(current_position && { current_position }),
+						...(firstName && { first_name: firstName }),
+						...(lastName && { last_name: lastName }),
+						...(fullName && { full_name: fullName }),
+						...(linkedinUrl && { linkedin_url: linkedinUrl }),
+						...(companyName && { company_name: companyName }),
+						...(currentPosition && { current_position: currentPosition }),
 						...(domain && { domain }),
 						...(location && { location }),
 						...(email && { email }),
-						...(contact_id && { contact_id }),
+						...(contactId && { contact_id: contactId }),
 					};
 
 					const endpoint = `${BASE_URL}/lists/${listId}/item`;
