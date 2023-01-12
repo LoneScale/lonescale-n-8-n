@@ -9,14 +9,14 @@ import {
 	INodeTypeDescription,
 	IWebhookResponseData,
 } from 'n8n-workflow';
-import { BASE_URL } from './constants';
-import { lonescaleApiRequest } from './GenericFunctions';
+import { BASE_URL } from '../utils/constants';
+import { lonescaleApiRequest } from '../utils/GenericFunctions';
 
 export class LoneScaleTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'LoneScale Trigger',
 		name: 'loneScaleTrigger',
-		icon: 'file:lonescale-logo.svg',
+		icon: 'file:../utils/lonescale-logo.svg',
 		group: ['trigger'],
 		version: 1,
 		subtitle: '={{$parameter["event"]}}',

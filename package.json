@@ -33,7 +33,8 @@
       "dist/credentials/LoneScaleApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/LoneScaleTrigger/LoneScaleTrigger.node.js"
+      "dist/nodes/LoneScaleTrigger/LoneScaleTrigger.node.js",
+      "dist/nodes/LoneScaleList/LoneScaleList.node.js"
     ]
   },
   "devDependencies": {
