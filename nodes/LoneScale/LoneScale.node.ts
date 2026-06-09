@@ -55,6 +55,12 @@ export class LoneScale implements INodeType {
 						action: 'Enrich a contact',
 					},
 					{
+						name: 'Search Company',
+						value: 'companySearch',
+						description: 'Look up a company by domain, LinkedIn or name',
+						action: 'Search a company',
+					},
+					{
 						name: 'Source Contacts',
 						value: 'source',
 						description: 'Source contacts from a company matching personas',
@@ -375,6 +381,75 @@ export class LoneScale implements INodeType {
 					},
 				],
 			},
+
+			/* -------------------------------------------------------------------------- */
+			/*                              companySearch                                  */
+			/* -------------------------------------------------------------------------- */
+			{
+				displayName: 'Company Domain',
+				name: 'domain',
+				type: 'string',
+				placeholder: 'stripe.com',
+				displayOptions: {
+					show: {
+						operation: ['companySearch'],
+					},
+				},
+				default: '',
+				description:
+					'Company domain to look up. Provide at least one of domain, LinkedIn ID, slug or name.',
+			},
+			{
+				displayName: 'LinkedIn ID',
+				name: 'linkedinId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['companySearch'],
+					},
+				},
+				default: '',
+				description: 'Numeric LinkedIn company ID (the digits in the linkedin.com/company/ URL)',
+			},
+			{
+				displayName: 'Slug',
+				name: 'slug',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['companySearch'],
+					},
+				},
+				default: '',
+				description:
+					'LinkedIn universal name / slug (the trailing segment in linkedin.com/company/{slug})',
+			},
+			{
+				displayName: 'Company Name',
+				name: 'name',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['companySearch'],
+					},
+				},
+				default: '',
+				description:
+					'Company name. Best-effort match — prefer domain, LinkedIn ID or slug for a deterministic result.',
+			},
+			{
+				displayName: 'Enrich',
+				name: 'enrich',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['companySearch'],
+					},
+				},
+				default: false,
+				description:
+					'Whether to fall back to on-demand enrichment when no cached match is found, and attach a headcount breakdown when possible',
+			},
 		],
 	};
 
@@ -477,6 +552,35 @@ export class LoneScale implements INodeType {
 							json: { ...sourced, profiles_found: response?.profiles_found },
 							pairedItem: { item: i },
 						});
+					}
+				}
+
+				if (operation === 'companySearch') {
+					const domain = this.getNodeParameter('domain', i) as string;
+					const linkedinId = this.getNodeParameter('linkedinId', i) as string;
+					const slug = this.getNodeParameter('slug', i) as string;
+					const name = this.getNodeParameter('name', i) as string;
+					const enrich = this.getNodeParameter('enrich', i) as boolean;
+
+					const qs: IDataObject = {
+						...(domain ? { domain } : {}),
+						...(linkedinId ? { linkedin_id: linkedinId } : {}),
+						...(slug ? { slug } : {}),
+						...(name ? { name } : {}),
+						...(enrich ? { enrich: true } : {}),
+					};
+
+					const response = (await lonescaleApiRequest.call(
+						this,
+						'GET',
+						'/companies/search',
+						{},
+						qs,
+					)) as { results?: IDataObject[] };
+
+					const results = response?.results ?? [];
+					for (const company of results) {
+						returnData.push({ json: company, pairedItem: { item: i } });
 					}
 				}
 			} catch (error) {
