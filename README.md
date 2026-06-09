@@ -1,9 +1,9 @@
 ![Banner](lonescale-banner.jpeg)
 # @lonescale/n8n-nodes-trigger
 
-This is an n8n community node. It lets you use LoneScale Trigger in your n8n workflows.
+This is an n8n community node. It lets you use LoneScale in your n8n workflows.
 
-LoneScale Trigger allows you to directly launch workflow from your LoneScale results
+The LoneScale node lets you enrich contacts and source contacts from companies directly from your n8n workflows.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
@@ -19,7 +19,12 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-Select one of your LoneScale workflow
+The **LoneScale** node supports the following operations:
+
+* **Enrich** — enrich a contact (first/last name) with email, phone and/or profile data via `POST /trigger/enrich/sync`. Optionally pass known fields (email, job title, LinkedIn URL, company domain/name, contact ID) and detect job changes.
+* **Source Contacts** — source contacts from a company (domain, name or LinkedIn URL) matching one or more personas (job titles, exclusions) via `POST /trigger/contact-sourcing/sync`. Filter by seniority level and country, and cap the number of contacts.
+
+Each incoming item triggers one synchronous request, and each returned contact is emitted as its own output item. Both endpoints are rate-limited to 5 requests per minute.
 
 ## Credentials
 
